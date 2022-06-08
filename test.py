@@ -1,36 +1,39 @@
-import discord
+class SingletonMeta(type):
+    """
+    The Singleton class can be implemented in different ways in Python. Some
+    possible methods include: base class, decorator, metaclass. We will use the
+    metaclass because it is best suited for this purpose.
+    """
 
-# DIRECT_MESSAGES
-# GUILDS
-# GUILD_MESSAGES
-print(discord.Intents.VALID_FLAGS["guilds"])
-print(discord.Intents.VALID_FLAGS["guild_messages"])
-print(discord.Intents.VALID_FLAGS["dm_messages"])
-#
-# client = discord_bot.Client()
-#
-#
-# @client.event
-# async def on_ready():
-#     print('We have logged in as {0.user}'.format(client))
-#
-#
-# @client.event
-# async def on_message(message):
-#     if message.author == client.user:
-#         return
-#
-#     if message.content.startswith('$hello'):
-#         await message.channel.send('Hello!')
-#
-# client.run('ODg2NDI2OTQ5MjE0NDE2OTc2.YT1bbQ.bBT_CIQre0SQOszFY4yqlH_MenI')
-#
-#
-# class Test:
-#     def __init__(self, bot):
-#         self.bot = bot
-#         pass
-#
-#     # @bot
-#     def test(self):
-#         pass
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        """
+        Possible changes to the value of the `__init__` argument do not affect
+        the returned instance.
+        """
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]
+
+
+class Singleton(metaclass=SingletonMeta):
+    def some_business_logic(self):
+        """
+        Finally, any singleton should define some business logic, which can be
+        executed on its instance.
+        """
+
+        # ...
+
+
+if __name__ == "__main__":
+    # The client code.
+    s1 = Singleton()
+    s2 = Singleton()
+
+    if id(s1) == id(s2):
+        print("Singleton works, both variables contain the same instance.")
+    else:
+        print("Singleton failed, variables contain different instances.")
