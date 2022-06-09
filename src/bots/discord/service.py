@@ -48,7 +48,6 @@ class DiscordBot(BaseBot):
         """
         Send embed message to a particular user
         """
-        # embed = discord.Embed(title=title, url=url, description=description, thumbnail=thumbnail, color=color)
         await self.send_message(user_id, embed)
 
     def run(self):
