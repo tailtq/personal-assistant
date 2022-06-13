@@ -10,7 +10,13 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
 
+import os
 from pathlib import Path
+
+import mongoengine
+from dotenv import load_dotenv
+
+load_dotenv("../.env")
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -37,7 +43,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'django_crontab',
     'bots.apps.BotsConfig',
+    'manga.apps.MangaConfig',
 ]
 
 MIDDLEWARE = [
@@ -75,10 +84,18 @@ WSGI_APPLICATION = 'core.wsgi.application'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
+    "default": {},
+    "mongodb": {
+        "NAME": os.environ.get("MONGODB_NAME"),
+        "HOST_NAME": os.environ.get("MONGODB_HOST_NAME"),
+        "USERNAME": os.environ.get("MONGODB_USERNAME"),
+        "PASSWORD": os.environ.get("MONGODB_PASSWORD"),
+    },
+    "redis": {
+        "HOST": os.environ.get("REDIS_HOST", "127.0.0.1"),
+        "PORT": int(os.environ.get("REDIS_PORT", 6379)),
+        "DB": int(os.environ.get("REDIS_DB", 0)),
+    },
 }
 
 
@@ -124,3 +141,18 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# Env variable
+DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN")
+
+CRONJOBS = [
+    ('* * * * *', 'manga.jobs.my_job.my_cron_job')
+]
+
+# Connect to MongoDB server
+mongoengine.connect(
+    db=DATABASES["mongodb"]["NAME"],
+    host=DATABASES["mongodb"]["HOST_NAME"],
+    username=DATABASES["mongodb"]["USERNAME"],
+    password=DATABASES["mongodb"]["PASSWORD"],
+)
