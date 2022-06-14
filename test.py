@@ -62,17 +62,17 @@ manga_list = [
     },
 ]
 manga_service = MangaService()
-print(list(manga_service.list_manga_with_latest_chapter()))
-# manga_chapter_service = MangaChapterService()
-#
-# for manga in manga_list:
-#     manga_entity = manga_service.create(
-#         name=manga["name"], thumbnail_url=manga["thumbnailUrl"], other_names=manga["otherNames"],
-#     )
-#     chapters = manga.get("chapters", [])
-#
-#     for chapter in chapters:
-#         print(manga_chapter_service.create(manga=manga_entity, **chapter))
+# print(list(manga_service.list_manga_with_latest_chapter()))
+manga_chapter_service = MangaChapterService()
+
+for manga in manga_list:
+    manga_entity = manga_service.create(
+        name=manga["name"], thumbnail_url=manga["thumbnailUrl"], other_names=manga["otherNames"],
+    )
+    chapters = manga.get("chapters", [])
+
+    for chapter in chapters:
+        print(manga_chapter_service.create(manga=manga_entity, **chapter))
 
 # manga_site = MangaSiteDTO(
 #     site_"name"="mangapark",

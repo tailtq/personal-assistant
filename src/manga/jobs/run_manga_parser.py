@@ -2,7 +2,10 @@ from typing import List, Dict
 
 from fuzzywuzzy import fuzz
 
+from core.message_queue import RedisMessageQueueService
+from manga.const import QueueMessage
 from manga.dtos.manga import MangaChapterDTO, MangaSiteDTO
+from manga.services import MangaChapterService
 from manga.services.manga import MangaService
 from manga.services.manga_parser import MangaParserService
 
@@ -28,9 +31,15 @@ CRAWLING_MANGA_SITES = [
 ]
 
 
-def filter_not_reading_chapters(chapters: List[MangaChapterDTO], manga_list: List[Dict]) -> List[MangaChapterDTO]:
+def _filter_not_reading_chapters(chapters: List[MangaChapterDTO]) -> List[MangaChapterDTO]:
+    """
+    1. Fetch all manga
+    2. Use fuzzy search & chapter comparison to match each chapter with the respective manga
+    3. Discard the non-interested manga chapters
+    """
     new_chapters = []
-    # using fuzzy search to match chapters & manga list saved into database
+    manga_list: List[Dict] = MangaService().list_manga_with_latest_chapter()
+
     for chapter in chapters:
         for manga in manga_list:
             for name in manga.get("all_names", []):
@@ -48,7 +57,10 @@ def filter_not_reading_chapters(chapters: List[MangaChapterDTO], manga_list: Lis
     return new_chapters
 
 
-def filter_manga_chapters_having_same_name(chapters: List[MangaChapterDTO]) -> List[MangaChapterDTO]:
+def _filter_manga_chapters_having_same_name(chapters: List[MangaChapterDTO]) -> List[MangaChapterDTO]:
+    """
+    Select the latest chapter for each manga after crawling
+    """
     manga_name_index = {}
 
     for i, chapter in enumerate(chapters):
@@ -61,16 +73,27 @@ def filter_manga_chapters_having_same_name(chapters: List[MangaChapterDTO]) -> L
 
 
 def run_manga_parser() -> None:
-    chapters: List[MangaChapterDTO] = [MangaChapterDTO("One Piece", 1010, "abc", "en")]
-    manga_list: List[Dict] = MangaService().list_manga_with_latest_chapter()
+    """
+
+    """
+    chapters: List[MangaChapterDTO] = []
 
     for manga_site in CRAWLING_MANGA_SITES:
         parser = MangaParserService(manga_site)
         chapters.extend(parser.parse_html())
 
-    chapters = filter_not_reading_chapters(chapters, manga_list)
-    # chapters = filter_manga_chapters_having_same_name(chapters)
-    print(chapters)
+    chapters = _filter_not_reading_chapters(chapters)
+    chapters = _filter_manga_chapters_having_same_name(chapters)
+    new_chapter_ids = MangaChapterService().create_batch(chapters)
+
+    message_queue = RedisMessageQueueService("bots_message_queue")
+    message_queue.push({
+        "message": QueueMessage.MANGA_RELEASE,
+        "data": {
+            "chapter_ids": new_chapter_ids,
+        },
+    })
+    print(new_chapter_ids)
 
 
 run_manga_parser()

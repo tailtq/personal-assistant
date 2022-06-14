@@ -1,3 +1,7 @@
+from typing import List
+
+from bson import ObjectId
+
 from ..const import MangaAccessMethod
 
 
@@ -33,3 +37,8 @@ class MangaChapterDTO:
 
     def __repr__(self) -> str:
         return f"Manga: {self.manga_name}, chapter: {self.chapter}, link: {self.link}"
+
+
+class NewChapterReleaseDTO:
+    def __init__(self, chapter_ids: List[ObjectId]):
+        self.chapter_ids = chapter_ids

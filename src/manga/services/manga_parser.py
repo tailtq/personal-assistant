@@ -56,7 +56,6 @@ class MangaParserService:
 
             manga_chapter = re.search("[\d.]+", self._safe_get_html_element(result, self._site.manga_chapter))
             manga_chapter = float(manga_chapter.group(0)) if manga_chapter else 0
-
             manga.append(MangaChapterDTO(manga_name, manga_chapter, manga_link, self._site.lang))
         return manga
 
