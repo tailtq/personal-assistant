@@ -1,10 +1,15 @@
+import json
+
 from discord.ext import commands, tasks
 
 from core.message_queue import RedisMessageQueueService
+from manga.const import QueueMessage
+from ..bot import DiscordBot
+from ..handlers.manga_release import MangaReleaseHandler
 
 
 class RedisListenerCog(commands.Cog):
-    def __init__(self, bot):
+    def __init__(self, bot: DiscordBot):
         self._bot = bot
         self.listen_to_redis.start()
         self._message_queue = RedisMessageQueueService("bots_message_queue")
@@ -15,9 +20,11 @@ class RedisListenerCog(commands.Cog):
     @tasks.loop(seconds=1.0)
     async def listen_to_redis(self):
         while not self._message_queue.is_empty():
-            message = self._message_queue.pull()
-            print("OKE OKE OKE", message, type(message))
-        print("Running listener")
+            message: bytes = self._message_queue.pull()
+            message: dict = json.loads(message.decode("utf-8"))
+
+            if message["message"] == QueueMessage.MANGA_RELEASE:
+                await MangaReleaseHandler(self._bot, **message["data"]).handle()
 
     @listen_to_redis.before_loop
     async def before_printer(self):

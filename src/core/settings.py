@@ -144,6 +144,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Env variable
 DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN")
+DISCORD_USER_ID = int(os.environ.get("DISCORD_USER_ID", 0))
 
 CRONJOBS = [
     ('* * * * *', 'manga.jobs.my_job.my_cron_job')
