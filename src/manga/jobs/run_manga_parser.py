@@ -1,3 +1,4 @@
+import json
 from typing import List, Dict
 
 from fuzzywuzzy import fuzz
@@ -86,14 +87,14 @@ def run_manga_parser() -> None:
     chapters = _filter_manga_chapters_having_same_name(chapters)
     new_chapter_ids = MangaChapterService().create_batch(chapters)
 
-    message_queue = RedisMessageQueueService("bots_message_queue")
-    message_queue.push({
-        "message": QueueMessage.MANGA_RELEASE,
-        "data": {
-            "chapter_ids": new_chapter_ids,
-        },
-    })
-    print(new_chapter_ids)
+    if new_chapter_ids:
+        message_queue = RedisMessageQueueService("bots_message_queue")
+        message_queue.push(json.dumps({
+            "message": QueueMessage.MANGA_RELEASE,
+            "data": {
+                "chapter_ids": [str(chapter_id) for chapter_id in new_chapter_ids],
+            },
+        }))
 
 
 run_manga_parser()

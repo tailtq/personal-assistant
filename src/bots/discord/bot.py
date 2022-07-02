@@ -1,13 +1,15 @@
 from typing import Union, List, Type
 
 import discord
+from discord import Embed
 from discord.ext.commands import Bot, Cog
 
 from bots.base import BaseBot
+from bots.discord.bot_interface import DiscordBotInterface
 
 
-class DiscordBot(BaseBot, Bot):
-    MESSAGE_EMBEDDED_COLOR = "#0099ff"
+class DiscordBot(BaseBot, Bot, DiscordBotInterface):
+    MESSAGE_EMBEDDED_COLOR = 0x0099ff
 
     def __init__(self, token: str, cog_classes: List[Type[Cog]] = None):
         BaseBot.__init__(self, token, command_prefix="")
@@ -30,21 +32,32 @@ class DiscordBot(BaseBot, Bot):
 
     async def send_message(self, user: Union[int, discord.User], message: Union[str, discord.Embed]) -> None:
         """
-        Send message to a particular user
+        Send a text message to a particular user
         """
-        if type(user) == int:
+        if type(user) != discord.User:
             user = await self.fetch_user(user)
 
         if type(message) == str:
-            await user.dm_channel.send(content=message)
+            await user.send(content=message)
         elif type(message) == discord.Embed:
-            await user.dm_channel.send(embed=message)
+            await user.send(embed=message)
 
-    async def send_embed_message(self, user_id: int, embed: discord.Embed) -> None:
+    async def send_embedded_message(
+        self, user_id: int, title: str, description: str, link: str, thumbnail_url: str
+    ) -> None:
         """
-        Send embed message to a particular user
+        Send an embedded message to a particular user
         """
-        await self.send_message(user_id, embed)
+        message = Embed.from_dict({
+            "title": title,
+            "description": description,
+            "url": link,
+            "color": DiscordBot.MESSAGE_EMBEDDED_COLOR,
+            "thumbnail": {
+                "url": thumbnail_url,
+            },
+        })
+        await self.send_message(user_id, message)
 
     def _add_cogs(self, cog_classes: List[Type[Cog]]) -> None:
         for cog_class in cog_classes:
