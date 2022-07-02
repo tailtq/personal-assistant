@@ -1,5 +1,4 @@
 import re
-import time
 import urllib.parse
 from typing import List
 
@@ -46,6 +45,7 @@ class MangaParserService:
         manga: List[MangaChapterDTO] = []
 
         for result in search_results:
+            # get manga name & link -> handle relative link
             manga_name = self._safe_get_html_element(result, self._site.manga_name)
             manga_link = self._safe_get_html_element(result, self._site.manga_link, data_retrieved="attr:href")
             if not urllib.parse.urlparse(manga_link).netloc:
@@ -54,6 +54,7 @@ class MangaParserService:
                 manga_link = manga_link[1:] if manga_link.startswith("/") else manga_link
                 manga_link = domain + manga_link
 
+            # extract chapter numbers using regex
             manga_chapter = re.search("[\d.]+", self._safe_get_html_element(result, self._site.manga_chapter))
             manga_chapter = float(manga_chapter.group(0)) if manga_chapter else 0
             manga.append(MangaChapterDTO(manga_name, manga_chapter, manga_link, self._site.lang))

@@ -16,10 +16,11 @@ from pathlib import Path
 import mongoengine
 from dotenv import load_dotenv
 
-load_dotenv("../.env")
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+ENV_PATH = BASE_DIR.parent / ".env"
+load_dotenv(ENV_PATH)
 
 
 # Quick-start development settings - unsuitable for production
@@ -147,7 +148,7 @@ DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN")
 DISCORD_USER_ID = int(os.environ.get("DISCORD_USER_ID", 0))
 
 CRONJOBS = [
-    ('* * * * *', 'manga.jobs.my_job.my_cron_job')
+    ('*/30 * * * *', 'manga.jobs.run_manga_parser.run_manga_parser')
 ]
 
 # Connect to MongoDB server
