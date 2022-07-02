@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 import os
 from pathlib import Path
+from urllib.parse import urlparse
 
 import mongoengine
 from dotenv import load_dotenv
@@ -20,19 +21,21 @@ from dotenv import load_dotenv
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 ENV_PATH = BASE_DIR.parent / ".env"
-load_dotenv(ENV_PATH)
+
+if os.path.exists(ENV_PATH):
+    load_dotenv(ENV_PATH)
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-ecu4&$k&!nndfp7ae0r_03l1+&-zo0xu=8te3e9v7+p!p^%p42'
+SECRET_KEY = os.environ.get("SECRET_KEY", "django-insecure-ecu4&$k&!nndfp7ae0r_03l1+&-zo0xu=8te3e9v7+p!p^%p42")
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ["0.0.0.0"]
 
 
 # Application definition
@@ -83,6 +86,9 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
+REDIS_URL = os.environ.get("REDIS_TLS_URL") or os.environ.get("REDIS_URL", "127.0.0.1:6379")
+REDIS_URL_SEGMENTS = REDIS_URL.split(":")
+REDIS_HOST, REDIS_PORT = ":".join(REDIS_URL_SEGMENTS[:-1]), int(REDIS_URL_SEGMENTS[-1])
 
 DATABASES = {
     "default": {},
@@ -93,8 +99,8 @@ DATABASES = {
         "PASSWORD": os.environ.get("MONGODB_PASSWORD"),
     },
     "redis": {
-        "HOST": os.environ.get("REDIS_HOST", "127.0.0.1"),
-        "PORT": int(os.environ.get("REDIS_PORT", 6379)),
+        "HOST": REDIS_PORT,
+        "PORT": REDIS_PORT,
         "DB": int(os.environ.get("REDIS_DB", 0)),
     },
 }
