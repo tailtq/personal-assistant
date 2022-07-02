@@ -99,7 +99,7 @@ DATABASES = {
         "PASSWORD": os.environ.get("MONGODB_PASSWORD"),
     },
     "redis": {
-        "HOST": REDIS_PORT,
+        "HOST": REDIS_HOST,
         "PORT": REDIS_PORT,
         "DB": int(os.environ.get("REDIS_DB", 0)),
     },
