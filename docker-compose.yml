@@ -4,7 +4,7 @@ services:
   redis:
     image: "redis:alpine"
     volumes:
-      - /Users/tailtq/Code/databases/redis:/data
+      - ~/Code/databases/redis:/data
     ports:
       - 6378:6379
   mongodb:
@@ -13,6 +13,6 @@ services:
       MONGO_INITDB_ROOT_USERNAME: root
       MONGO_INITDB_ROOT_PASSWORD: root
     volumes:
-      - /Users/tailtq/Code/databases/mongodb:/data/db
+      - ~/Code/databases/mongodb:/data/db
     ports:
       - 27017:27017
