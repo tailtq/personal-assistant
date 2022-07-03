@@ -1,17 +1,42 @@
-from django.shortcuts import render
-
-# Create your views here.
+from rest_framework.request import Request
 from rest_framework.response import Response
-from rest_framework.views import APIView
 from rest_framework import status
 
-from manga.models.manga import Manga
+from core.views.base import BaseViewSet
+from manga.serializers.manga import MangaSerializer
+from manga.services import MangaService
 
 
-class MangaList(APIView):
+class MangaViewSet(BaseViewSet):
+    serializer_class = MangaSerializer
+
     """
     List all snippets, or create a new snippet.
     """
-    def get(self, request, format=None):
-        manga = Manga.objects.create(name="One Piece", thumbnail_url="https://images.mangafreak.net/manga_images/one_piece.jpg")
-        return Response(manga, status=status.HTTP_200_OK)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self._service = MangaService()
+
+    def list(self, request: Request):
+        serializer = self.serializer_class(self._service.list(), many=True)
+        return self.success(serializer.data)
+
+    def create(self, request: Request):
+        serializer = self.serializer_class(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return self.success(serializer.data)
+        return self.error(serializer.errors)
+
+    def update(self, request: Request, pk: str):
+        serializer = self.serializer_class(data=request.data, context={"_id": pk})
+        if serializer.is_valid():
+            serializer.save()
+            return self.success(serializer.data)
+        return self.error(serializer.errors)
+
+    def delete(self, request: Request, pk: str):
+        count = self._service.delete_by_id(pk)
+        if count != 0:
+            return self.success({"total": count})
+        return self.error()
