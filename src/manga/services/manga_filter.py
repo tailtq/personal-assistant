@@ -23,7 +23,7 @@ class MangaFilter:
         3. Discard the non-interested manga chapters
         """
         new_chapters = []
-        manga_list: List[Dict] = self._manga_service.list_manga_with_latest_chapter()
+        manga_list: List[Dict] = self._manga_service.list_with_latest_chapter()
 
         for chapter in chapters:
             for manga in manga_list:

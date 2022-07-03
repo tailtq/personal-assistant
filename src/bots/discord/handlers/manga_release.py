@@ -13,7 +13,7 @@ class MangaReleaseHandler:
 
     async def handle(self):
         user_id: int = settings.DISCORD_USER_ID
-        chapters = MangaChapterService().list(id__in=self._chapter_ids)
+        chapters = MangaChapterService().list({"id__in": self._chapter_ids})
 
         for chapter in chapters:
             manga = chapter.manga.fetch()

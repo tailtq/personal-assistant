@@ -1,10 +1,8 @@
-from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
+from rest_framework import routers
 
-from manga import views
+from manga.views import MangaViewSet
 
-urlpatterns = [
-    path('/', views.MangaList.as_view()),
-]
+router = routers.SimpleRouter(trailing_slash=False)
+router.register("manga", MangaViewSet, basename="Manga")
 
-urlpatterns = format_suffix_patterns(urlpatterns)
+urlpatterns = router.urls
