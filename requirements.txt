@@ -12,3 +12,5 @@ beautifulsoup4~=4.11.1
 discord~=1.7.3
 fuzzywuzzy~=0.18.0
 python-Levenshtein~=0.12.2
+
+pymongo[srv]
