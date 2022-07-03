@@ -93,10 +93,8 @@ REDIS_HOST, REDIS_PORT = ":".join(REDIS_URL_SEGMENTS[:-1]), int(REDIS_URL_SEGMEN
 DATABASES = {
     "default": {},
     "mongodb": {
-        "NAME": os.environ.get("MONGODB_NAME"),
-        "HOST_NAME": os.environ.get("MONGODB_HOST_NAME"),
-        "USERNAME": os.environ.get("MONGODB_USERNAME"),
-        "PASSWORD": os.environ.get("MONGODB_PASSWORD"),
+        "DB_NAME": os.environ.get("MONGODB_DB_NAME"),
+        "URI": os.environ.get("MONGODB_URI"),
     },
     "redis": {
         "HOST": REDIS_HOST,
@@ -160,8 +158,6 @@ CRONJOBS = [
 
 # Connect to MongoDB server
 mongoengine.connect(
-    db=DATABASES["mongodb"]["NAME"],
-    host=DATABASES["mongodb"]["HOST_NAME"],
-    username=DATABASES["mongodb"]["USERNAME"],
-    password=DATABASES["mongodb"]["PASSWORD"],
+    db=DATABASES["mongodb"]["DB_NAME"],
+    host=DATABASES["mongodb"]["URI"],
 )
