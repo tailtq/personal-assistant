@@ -1,6 +1,4 @@
 from rest_framework.request import Request
-from rest_framework.response import Response
-from rest_framework import status
 
 from core.views.base import BaseViewSet
 from manga.serializers.manga import MangaSerializer
