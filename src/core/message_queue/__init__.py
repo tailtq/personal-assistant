@@ -1,1 +1,0 @@
-from core.message_queue.redis_message_queue_service import RedisMessageQueueService

@@ -19,11 +19,13 @@ from dotenv import load_dotenv
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 ENV_PATH = BASE_DIR.parent / ".env"
 
 if os.path.exists(ENV_PATH):
     load_dotenv(ENV_PATH)
+
+# Configure sentry
+from core.config.sentry import *
 
 
 # Quick-start development settings - unsuitable for production
@@ -154,7 +156,7 @@ DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN")
 DISCORD_USER_ID = int(os.environ.get("DISCORD_USER_ID", 0))
 
 CRONJOBS = [
-    ('*/30 * * * *', 'manga.jobs.run_manga_parser.run_manga_parser')
+    ('* * * * *', 'manga.jobs.run_manga_parser.run_manga_parser')
 ]
 
 # Connect to MongoDB server
