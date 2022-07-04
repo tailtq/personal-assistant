@@ -4,35 +4,35 @@ from manga.services.manga import MangaService
 manga_list = [
     {
          "name": "One Piece",
-         "thumbnailUrl": "https://images.mangafreak.net/manga_images/one_piece.jpg",
+         "thumbnail_url": "https://images.mangafreak.net/manga_images/one_piece.jpg",
     },
     {
         "name": "Jagaaaaaan",
-        "thumbnailUrl": "https://cdn.truyentranh.net/upload/image/comic/20170303/jagaaaaaan-58b945b82d7bc-thumbnail-176x264.jpg",
+        "thumbnail_url": "https://cdn.truyentranh.net/upload/image/comic/20170303/jagaaaaaan-58b945b82d7bc-thumbnail-176x264.jpg"
     },
     {
         "name": "Tokyo Revengers",
-        "thumbnailUrl": "https://images.mangafreak.net/manga_images/toukyou_revengers.jpg",
-        "otherNames": ([
+        "thumbnail_url": "https://images.mangafreak.net/manga_images/toukyou_revengers.jpg",
+        "other_names": [
             "Tokyo卍Revengers",
             "Toukyou Revengers",
-        ]),
+        ]
     },
     {
         "name": "My Hero Academia",
-        "thumbnailUrl": "https://xcdn-000.animemark.com/images/W600/02a/6044dcd1cc60840d83bdba20_223_350_62952.jpg",
+        "thumbnail_url": "https://xcdn-000.animemark.com/images/W600/02a/6044dcd1cc60840d83bdba20_223_350_62952.jpg"
     },
     {
         "name": "Onepunch-Man",
-        "thumbnailUrl": "https://images.mangafreak.net/manga_images/onepunch_man.jpg",
+        "thumbnail_url": "https://images.mangafreak.net/manga_images/onepunch_man.jpg"
     },
     {
         "name": "Kanojo, Okarishimasu",
-        "thumbnailUrl": "https://images.mangafreak.net/manga_images/kanojo_okarishimasu.jpg",
+        "thumbnail_url": "https://images.mangafreak.net/manga_images/kanojo_okarishimasu.jpg"
     },
     {
         "name": "How to Fight",
-        "thumbnailUrl": "https://xcdn-000.animemark.com/images/W600/ed6/60458203c9d6ca277900e6de_605_830_246998.png",
+        "thumbnail_url": "https://xcdn-000.animemark.com/images/W600/ed6/60458203c9d6ca277900e6de_605_830_246998.png"
     },
 ]
 manga_service = MangaService()
@@ -41,7 +41,7 @@ manga_chapter_service = MangaChapterService()
 
 for manga in manga_list:
     manga_entity = manga_service.create(
-        name=manga["name"], thumbnail_url=manga["thumbnailUrl"], other_names=manga["otherNames"],
+        name=manga["name"], thumbnail_url=manga["thumbnail_url"], other_names=manga["other_names"],
     )
     chapters = manga.get("chapters", [])
 

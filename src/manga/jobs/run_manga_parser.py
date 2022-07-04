@@ -1,7 +1,11 @@
 import json
 from typing import List
 
-from core.message_queue import RedisMessageQueueService
+# Configure sentry
+import sentry_sdk.utils
+
+from core.config.sentry import *
+from core.services import RedisMessageQueueService
 from manga.const import QueueMessage
 from manga.dtos.manga import MangaChapterDTO, MangaSiteDTO
 from manga.services import MangaChapterService
@@ -34,6 +38,8 @@ def run_manga_parser() -> None:
     """
     Run manga parser
     """
+    sentry_sdk.capture_message("Scheduler is running")
+
     try:
         chapters: List[MangaChapterDTO] = []
 

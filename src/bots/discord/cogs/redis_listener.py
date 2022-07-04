@@ -1,13 +1,11 @@
 import json
-import os
 
 from discord.ext import commands, tasks
 
-from core.message_queue import RedisMessageQueueService
-from core.message_queue.redis_message_queue_service import REDIS_PORT, REDIS_HOST
+from core.services import RedisMessageQueueService
 from manga.const import QueueMessage
-from ..bot import DiscordBot
-from ..handlers.manga_release import MangaReleaseHandler
+from bots.discord.bot import DiscordBot
+from bots.discord.handlers.manga_release import MangaReleaseHandler
 
 
 class RedisListenerCog(commands.Cog):
