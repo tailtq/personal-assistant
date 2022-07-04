@@ -1,8 +1,8 @@
 from rest_framework import routers
 
-from manga.views import MangaViewSet
+from UI.views import UIViewSet
 
 router = routers.SimpleRouter(trailing_slash=False)
-router.register("", MangaViewSet, basename="Manga")
+router.register("", UIViewSet, basename="UI")
 
 urlpatterns = router.urls

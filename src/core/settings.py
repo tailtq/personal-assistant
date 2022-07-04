@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'django_crontab',
     'bots.apps.BotsConfig',
     'manga.apps.MangaConfig',
+    'UI.apps.UIConfig',
 ]
 
 MIDDLEWARE = [
