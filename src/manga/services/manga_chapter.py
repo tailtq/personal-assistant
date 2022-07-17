@@ -21,7 +21,9 @@ class MangaChapterService(BaseService):
         if len(chapters) == 0:
             return []
         chapters = [
-            MangaChapter(manga=chapter.manga_object_id, chapter=chapter.chapter, link=chapter.link)
+            MangaChapter(
+                manga=chapter.manga_object_id, chapter=chapter.chapter, link=chapter.link, site_name=chapter.site_name
+            )
             for chapter in chapters
         ]
         return self.repository.create(chapters, load_multiple=load_multiple)

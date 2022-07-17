@@ -22,4 +22,6 @@ class MangaReleaseHandler:
 
             title = f"Manga Release - {manga.name}"
             description = f"Chapter {chapter_number} has been released. Check it out."
-            await self._bot.send_embedded_message(user_id, title, description, chapter.link, manga.thumbnail_url)
+            await self._bot.send_embedded_message(
+                user_id, title, description, chapter.link, manga.thumbnail_url, chapter.site_name
+            )

@@ -1,4 +1,4 @@
-from typing import Union, List, Type
+from typing import Union, List, Type, Optional
 
 import discord
 from discord import Embed
@@ -43,7 +43,7 @@ class DiscordBot(BaseBot, Bot, DiscordBotInterface):
             await user.send(embed=message)
 
     async def send_embedded_message(
-        self, user_id: int, title: str, description: str, link: str, thumbnail_url: str
+        self, user_id: int, title: str, description: str, link: str, thumbnail_url: str, footer: Optional[str] = None
     ) -> None:
         """
         Send an embedded message to a particular user
@@ -55,6 +55,9 @@ class DiscordBot(BaseBot, Bot, DiscordBotInterface):
             "color": DiscordBot.MESSAGE_EMBEDDED_COLOR,
             "thumbnail": {
                 "url": thumbnail_url,
+            },
+            "footer": {
+                "text": footer,
             },
         })
         await self.send_message(user_id, message)

@@ -13,17 +13,26 @@ from manga.services.manga_filter import MangaFilter
 from manga.services.manga_parser import MangaParserService
 
 CRAWLING_MANGA_SITES = [
+    # MangaSiteDTO(
+    #     site_name="truyentranhtuan",
+    #     lang="vi",
+    #     crawl_url="http://truyentranhtuan.com/",
+    #     manga_list="#story-list .manga-focus",
+    #     manga_name=".manga a",
+    #     manga_chapter=".chapter a",
+    #     manga_link=".chapter a",
+    # ),
     MangaSiteDTO(
-        site_name="truyentranhtuan",
-        lang="vi",
-        crawl_url="http://truyentranhtuan.com/",
-        manga_list="#story-list .manga-focus",
-        manga_name=".manga a",
-        manga_chapter=".chapter a",
-        manga_link=".chapter a",
+        site_name="MangaFreak",
+        lang="en",
+        crawl_url="https://w13.mangafreak.net/",
+        manga_list=".latest_list:first-child > .latest_item",
+        manga_name="a.name",
+        manga_chapter=".chapter_box a:first-child",
+        manga_link=".chapter_box a:first-child",
     ),
     MangaSiteDTO(
-        site_name="mangapark",
+        site_name="MangaPark",
         lang="en",
         crawl_url="https://mangapark.net/",
         manga_list="#release-list > .item",
