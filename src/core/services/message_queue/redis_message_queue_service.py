@@ -5,8 +5,13 @@ from django.conf import settings
 
 REDIS_HOST = settings.DATABASES["redis"]["HOST"]
 REDIS_PORT = settings.DATABASES["redis"]["PORT"]
+REDIS_USERNAME = settings.DATABASES["redis"]["USERNAME"]
+REDIS_PASSWORD = settings.DATABASES["redis"]["PASSWORD"]
+REDIS_SSL = settings.DATABASES["redis"]["SSL"]
 REDIS_DB = settings.DATABASES["redis"]["DB"]
-REDIS_CLIENT = Redis(host=REDIS_HOST, port=REDIS_PORT, db=REDIS_DB)
+REDIS_CLIENT = Redis(
+    host=REDIS_HOST, port=REDIS_PORT, username=REDIS_USERNAME, password=REDIS_PASSWORD, db=REDIS_DB, ssl=REDIS_SSL
+)
 
 
 class RedisMessageQueueService:
