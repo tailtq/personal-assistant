@@ -89,9 +89,8 @@ WSGI_APPLICATION = 'core.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
-REDIS_URL = os.environ.get("REDIS_TLS_URL") or os.environ.get("REDIS_URL", "127.0.0.1:6379")
-REDIS_URL_SEGMENTS = REDIS_URL.split(":")
-REDIS_HOST, REDIS_PORT = ":".join(REDIS_URL_SEGMENTS[:-1]), int(REDIS_URL_SEGMENTS[-1])
+REDIS_URL = os.environ.get("REDIS_TLS_URL") or os.environ.get("REDIS_URL", "redis://127.0.0.1:6379")
+REDIS_URL = urlparse(REDIS_URL)
 
 DATABASES = {
     "default": {},
@@ -100,8 +99,11 @@ DATABASES = {
         "URI": os.environ.get("MONGODB_URI"),
     },
     "redis": {
-        "HOST": REDIS_HOST,
-        "PORT": REDIS_PORT,
+        "HOST": REDIS_URL.hostname,
+        "PORT": REDIS_URL.port,
+        "USERNAME": REDIS_URL.username,
+        "PASSWORD": REDIS_URL.password,
+        "SSL": REDIS_URL.scheme == "rediss",
         "DB": int(os.environ.get("REDIS_DB", 0)),
     },
 }
