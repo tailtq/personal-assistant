@@ -10,7 +10,13 @@ REDIS_PASSWORD = settings.DATABASES["redis"]["PASSWORD"]
 REDIS_SSL = settings.DATABASES["redis"]["SSL"]
 REDIS_DB = settings.DATABASES["redis"]["DB"]
 REDIS_CLIENT = Redis(
-    host=REDIS_HOST, port=REDIS_PORT, username=REDIS_USERNAME, password=REDIS_PASSWORD, db=REDIS_DB, ssl=REDIS_SSL
+    host=REDIS_HOST,
+    port=REDIS_PORT,
+    username=REDIS_USERNAME,
+    password=REDIS_PASSWORD,
+    db=REDIS_DB,
+    ssl=REDIS_SSL,
+    ssl_cert_reqs=None,
 )
 
 
