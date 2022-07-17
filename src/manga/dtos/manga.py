@@ -28,11 +28,12 @@ class MangaSiteDTO:
 
 
 class MangaChapterDTO:
-    def __init__(self, manga_name: str, chapter: float, link: str, lang: str):
+    def __init__(self, manga_name: str, chapter: float, link: str, lang: str, site_name: str):
         self.manga_name = manga_name
         self.chapter = chapter
         self.link = link
         self.lang = lang
+        self.site_name = site_name
         self.manga_object_id = None
 
     def __repr__(self) -> str:

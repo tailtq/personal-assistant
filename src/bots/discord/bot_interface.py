@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Union, Optional
 
 import discord
 
@@ -8,6 +8,12 @@ class DiscordBotInterface:
         raise NotImplementedError()
 
     async def send_embedded_message(
-        self, user_id: int, title: str, description: str, link: str, thumbnail_url: str
+        self,
+        user_id: int,
+        title: str,
+        description: str,
+        link: str,
+        thumbnail_url: str,
+        footer: Optional[str] = None
     ) -> None:
         raise NotImplementedError()
