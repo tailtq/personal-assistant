@@ -3,11 +3,11 @@ from typing import List
 from django.conf import settings
 
 from manga.services import MangaChapterService
-from ..bot import DiscordBotInterface
+from ..bot import BotInterface
 
 
 class MangaReleaseHandler:
-    def __init__(self, bot: DiscordBotInterface, chapter_ids: List[str]):
+    def __init__(self, bot: BotInterface, chapter_ids: List[str]):
         self._bot = bot
         self._chapter_ids = chapter_ids
 
