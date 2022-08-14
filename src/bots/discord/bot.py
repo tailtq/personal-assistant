@@ -5,10 +5,12 @@ from discord import Embed
 from discord.ext.commands import Bot, Cog
 
 from bots.base import BaseBot
-from bots.discord.bot_interface import DiscordBotInterface
+from bots.interfaces import BotInterface
+from core.services.message_handler import MessageHandler
+from expense.services.expense_message_handler import ExpenseMessageHandler
 
 
-class DiscordBot(BaseBot, Bot, DiscordBotInterface):
+class DiscordBot(BaseBot, Bot, BotInterface):
     MESSAGE_EMBEDDED_COLOR = 0x0099ff
 
     def __init__(self, token: str, cog_classes: List[Type[Cog]] = None):
@@ -21,8 +23,16 @@ class DiscordBot(BaseBot, Bot, DiscordBotInterface):
         # message.content == 'raise-exception'
         # get intent -> handle relevant app
         # Note: All Discord messages must be sent via a channel (public, private)
+        message_handlers: List[Type[MessageHandler]] = [
+            ExpenseMessageHandler
+        ]
+        for handler_class in message_handlers:
+            handler = handler_class(message.clean_content, self)
+            if handler.is_valid():
+                handler.handle()
+                break
         # await message.channel.send("OK")
-        # await self.send_message(480527832137728000, "Haha")
+        # await self.send_message(settings.DISCORD_USER_ID, "Haha")
 
     async def on_ready(self):
         print(f"{self.user} is ready!")
@@ -43,7 +53,7 @@ class DiscordBot(BaseBot, Bot, DiscordBotInterface):
             await user.send(embed=message)
 
     async def send_embedded_message(
-        self, user_id: int, title: str, description: str, link: str, thumbnail_url: str, footer: Optional[str] = None
+        self, user: int, title: str, description: str, link: str, thumbnail_url: str, footer: Optional[str] = None
     ) -> None:
         """
         Send an embedded message to a particular user
@@ -60,7 +70,7 @@ class DiscordBot(BaseBot, Bot, DiscordBotInterface):
                 "text": footer,
             },
         })
-        await self.send_message(user_id, message)
+        await self.send_message(user, message)
 
     def _add_cogs(self, cog_classes: List[Type[Cog]]) -> None:
         for cog_class in cog_classes:
