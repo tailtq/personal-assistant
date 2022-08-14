@@ -14,8 +14,8 @@ class MangaSiteDTO:
         manga_list: str,
         manga_name: str,
         manga_chapter: str,
-        manga_link: str,
-        access_method: int = MangaAccessMethod.HTTP_REQUESTS,  # puppeteer, requests
+        chapter_text_pattern: str,
+        access_method: MangaAccessMethod = MangaAccessMethod.HTTP_REQUESTS,  # puppeteer, requests
     ):
         self.site_name = site_name
         self.lang = lang
@@ -23,7 +23,7 @@ class MangaSiteDTO:
         self.manga_list = manga_list
         self.manga_name = manga_name
         self.manga_chapter = manga_chapter
-        self.manga_link = manga_link
+        self.chapter_text_pattern = chapter_text_pattern
         self.access_method = access_method
 
 
