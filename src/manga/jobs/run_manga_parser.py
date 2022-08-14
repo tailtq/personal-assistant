@@ -2,7 +2,7 @@ import json
 from typing import List
 
 # Configure sentry
-import sentry_sdk.utils
+import sentry_sdk
 
 from core.config.sentry import *
 from core.services import RedisMessageQueueService

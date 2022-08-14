@@ -26,14 +26,14 @@ class ExpenseService(BaseService):
             # preprocess data
             item = {key: value.strip() for key, value in item.items()}
             # group freetext category
-            category = self._expense_category_service.group_category(item["category"].strip())
+            category = self._expense_category_service.group_category(item["category"])
             spent_at = datetime.strptime(f"{item['spent_at']}/{datetime.today().year}", "%d/%m/%Y")
             insert_data.append(
                 Expense(
                     category=category,
-                    description=item.get("description", "").strip(),
-                    amount=float(item["amount"].strip()),
-                    currency=self._group_currency(item["currency"].strip()),
+                    description=item.get("description", ""),
+                    amount=float(item["amount"]),
+                    currency=self._group_currency(item["currency"]),
                     spent_at=spent_at
                 )
             )
@@ -43,7 +43,7 @@ class ExpenseService(BaseService):
 
     @staticmethod
     def _group_currency(currency: str):
-        return "KVND" if currency.strip().lower() == "k" else "$"
+        return "$" if currency.strip() == "$" else "KVND"
 
     def _delete_relationships(self, _id: Union[str, int]):
         pass
