@@ -23,14 +23,17 @@ class DiscordBot(BaseBot, Bot, BotInterface):
         # message.content == 'raise-exception'
         # get intent -> handle relevant app
         # Note: All Discord messages must be sent via a channel (public, private)
-        message_handlers: List[Type[MessageHandler]] = [
-            ExpenseMessageHandler
-        ]
-        for handler_class in message_handlers:
-            handler = handler_class(message.clean_content, self)
-            if handler.is_valid():
-                handler.handle()
-                break
+        try:
+            message_handlers: List[Type[MessageHandler]] = [
+                ExpenseMessageHandler
+            ]
+            for handler_class in message_handlers:
+                handler = handler_class(message.clean_content, self)
+                if handler.is_valid():
+                    await handler.handle()
+                    break
+        except:
+            pass
         # await message.channel.send("OK")
         # await self.send_message(settings.DISCORD_USER_ID, "Haha")
 
