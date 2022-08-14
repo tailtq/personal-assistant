@@ -1,5 +1,7 @@
 import abc
 
+from django.conf import settings
+
 from bots.interfaces import BotInterface
 
 
@@ -14,5 +16,9 @@ class MessageHandler(abc.ABC):
         ...
 
     @abc.abstractmethod
-    def handle(self):
+    async def handle(self):
         ...
+
+    async def _respond(self, message: str):
+        user_id = settings.DISCORD_USER_ID
+        await self._bot.send_message(user_id, message)
