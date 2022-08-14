@@ -21,8 +21,8 @@ class DiscordBot(BaseBot, Bot, DiscordBotInterface):
         # message.content == 'raise-exception'
         # get intent -> handle relevant app
         # Note: All Discord messages must be sent via a channel (public, private)
-        await message.channel.send("OK")
-        await self.send_message(480527832137728000, "Haha")
+        # await message.channel.send("OK")
+        # await self.send_message(480527832137728000, "Haha")
 
     async def on_ready(self):
         print(f"{self.user} is ready!")
