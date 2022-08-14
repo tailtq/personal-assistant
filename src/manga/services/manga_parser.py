@@ -1,10 +1,12 @@
 import re
 import urllib.parse
-from typing import List
+from typing import List, Tuple
 
 import requests
 
 from bs4 import BeautifulSoup, Tag
+from pyppeteer import launch
+import asyncio
 
 from ..const import MangaAccessMethod
 from ..dtos.manga import MangaSiteDTO, MangaChapterDTO
@@ -24,11 +26,18 @@ class MangaParserService:
         return res.text
 
     @staticmethod
-    def _crawl_html_content_by_puppeteer(url: str) -> str:
+    async def _crawl_html_content_by_puppeteer(url: str) -> str:
         """
         Get raw HTML of a page using Puppeteer
         """
-        pass
+        browser = await launch(headless=True)
+        page = await browser.newPage()
+        await page.goto(url)
+        await page.waitFor(1.5)
+        content = await page.content()
+        await browser.close()
+
+        return content
 
     def parse_html(self) -> List[MangaChapterDTO]:
         """
@@ -38,7 +47,7 @@ class MangaParserService:
         if self._site.access_method == MangaAccessMethod.HTTP_REQUESTS:
             html = self._crawl_html_content_by_http_requests(self._site.crawl_url)
         elif self._site.access_method == MangaAccessMethod.PUPPETEER:
-            html = self._crawl_html_content_by_puppeteer(self._site.crawl_url)
+            html = asyncio.run(self._crawl_html_content_by_puppeteer(self._site.crawl_url))
 
         bs = BeautifulSoup(html, features="html.parser")
         search_results: List[Tag] = bs.select(self._site.manga_list)
@@ -47,16 +56,16 @@ class MangaParserService:
         for result in search_results:
             # get manga name & link -> handle relative link
             manga_name = self._safe_get_html_element(result, self._site.manga_name)
-            manga_link = self._safe_get_html_element(result, self._site.manga_link, data_retrieved="attr:href")
+            manga_chapter, manga_link = self._get_manga_latest_chapter(
+                result, self._site.manga_chapter, self._site.chapter_text_pattern
+            )
+            if manga_chapter is None or manga_link is None:
+                continue
             if not urllib.parse.urlparse(manga_link).netloc:
                 domain = urllib.parse.urlparse(self._site.crawl_url)
                 domain = f"{domain.scheme}://{domain.netloc}/"
                 manga_link = manga_link[1:] if manga_link.startswith("/") else manga_link
                 manga_link = domain + manga_link
-
-            # extract chapter numbers using regex
-            manga_chapter = re.search("[\d.]+", self._safe_get_html_element(result, self._site.manga_chapter))
-            manga_chapter = float(manga_chapter.group(0)) if manga_chapter else 0
             manga.append(MangaChapterDTO(manga_name, manga_chapter, manga_link, self._site.lang, self._site.site_name))
         return manga
 
@@ -73,3 +82,26 @@ class MangaParserService:
                 data_retrieved = data_retrieved.split(":")[1]
                 return child_obj[0].attrs[data_retrieved].strip()
         return ""
+
+    @staticmethod
+    def _get_manga_latest_chapter(bs: Tag, tag: str, chapter_text_pattern: str) -> Tuple[float, str]:
+        """
+        Get chapter number and chapter link using Regex. There are a few patterns we need to handle:
+        - Chapter 45
+        - Vol.0 Ch.3
+        - Chapter 9: Story
+        - Chapter 21.2
+        - Vol.3 Chapter 36: French Onion Soup On A Rainy Day
+        """
+        result = (None, None)
+        chapters = []
+        child_objs: List[Tag] = bs.select(tag)
+        if child_objs is not None and len(child_objs) > 0:
+            for obj in child_objs:
+                chapter_number = float(re.search(chapter_text_pattern, obj.get_text()).groups()[-1])
+                link = obj.attrs["href"].strip()
+                chapters.append((chapter_number, link))
+        if chapters:
+            chapters = sorted(chapters, key=lambda x: x[0], reverse=True)
+            result = chapters[0]
+        return result

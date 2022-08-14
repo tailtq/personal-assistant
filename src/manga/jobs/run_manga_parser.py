@@ -6,7 +6,7 @@ import sentry_sdk.utils
 
 from core.config.sentry import *
 from core.services import RedisMessageQueueService
-from manga.const import QueueMessage
+from manga.const import QueueMessage, MangaAccessMethod
 from manga.dtos.manga import MangaChapterDTO, MangaSiteDTO
 from manga.services import MangaChapterService
 from manga.services.manga_filter import MangaFilter
@@ -20,7 +20,6 @@ CRAWLING_MANGA_SITES = [
     #     manga_list="#story-list .manga-focus",
     #     manga_name=".manga a",
     #     manga_chapter=".chapter a",
-    #     manga_link=".chapter a",
     # ),
     MangaSiteDTO(
         site_name="MangaFreak",
@@ -28,17 +27,18 @@ CRAWLING_MANGA_SITES = [
         crawl_url="https://w13.mangafreak.net/",
         manga_list=".latest_list:first-child > .latest_item",
         manga_name="a.name",
+        chapter_text_pattern=r"Chapter ([0-9.]+)",
         manga_chapter=".chapter_box a:first-child",
-        manga_link=".chapter_box a:first-child",
     ),
     MangaSiteDTO(
         site_name="MangaPark",
         lang="en",
         crawl_url="https://mangapark.net/",
-        manga_list="#release-list > .item",
-        manga_name="a.fw-bold",
-        manga_chapter="a.visited",
-        manga_link="a.visited",
+        manga_list="#latest_release .group",
+        manga_name="h3.text-lg a",
+        manga_chapter="ul li a",
+        chapter_text_pattern=r"(Chapter |Ch\.)([0-9.]+)",
+        access_method=MangaAccessMethod.PUPPETEER,
     ),
 ]
 
