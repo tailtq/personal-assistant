@@ -1,13 +1,16 @@
 from typing import Union, List, Type, Optional
 
 import discord
+import sentry_sdk
 from discord import Embed
 from discord.ext.commands import Bot, Cog
+from django.conf import settings
 
 from bots.base import BaseBot
 from bots.interfaces import BotInterface
-from core.services.message_handler import MessageHandler
-from expense.services.expense_message_handler import ExpenseMessageHandler
+from message.services.message_handler import MessageHandler
+from message.services import ExpenseMessageHandler
+from message.const import MessageTemplate
 
 
 class DiscordBot(BaseBot, Bot, BotInterface):
@@ -17,6 +20,12 @@ class DiscordBot(BaseBot, Bot, BotInterface):
         BaseBot.__init__(self, token, command_prefix="")
         self._add_cogs(cog_classes)
 
+    @property
+    def message_handlers(self) -> List[Type[MessageHandler]]:
+        return [
+            ExpenseMessageHandler
+        ]
+
     async def on_message(self, message: discord.Message):
         if message.author == self.user:
             return
@@ -24,18 +33,15 @@ class DiscordBot(BaseBot, Bot, BotInterface):
         # get intent -> handle relevant app
         # Note: All Discord messages must be sent via a channel (public, private)
         try:
-            message_handlers: List[Type[MessageHandler]] = [
-                ExpenseMessageHandler
-            ]
-            for handler_class in message_handlers:
-                handler = handler_class(message.clean_content, self)
+            for handler_class in self.message_handlers:
+                handler = handler_class(message.clean_content)
                 if handler.is_valid():
-                    await handler.handle()
+                    message = await handler.handle()
+                    await self.send_message(settings.DISCORD_USER_ID, message)
                     break
-        except:
-            pass
-        # await message.channel.send("OK")
-        # await self.send_message(settings.DISCORD_USER_ID, "Haha")
+        except Exception as e:
+            await self.send_message(settings.DISCORD_USER_ID, MessageTemplate.TECHNICAL_ISSUE)
+            sentry_sdk.capture_exception(e)
 
     async def on_ready(self):
         print(f"{self.user} is ready!")

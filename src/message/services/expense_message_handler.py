@@ -1,9 +1,9 @@
 import re
-from re import Pattern
 
-from core.services.message_handler import MessageHandler
+from message.services.message import save_message
+from message.services.message_handler import MessageHandler
 from expense.services import ExpenseService
-from message.const import MESSAGES
+from message.const import AppName, MessageTemplate
 
 
 class ExpenseMessageHandler(MessageHandler):
@@ -17,7 +17,12 @@ class ExpenseMessageHandler(MessageHandler):
     def is_valid(self) -> bool:
         return bool(re.fullmatch(self.VALID_PATTERN, self._message))
 
-    async def handle(self):
+    @save_message(AppName.EXPENSE)
+    async def handle(self) -> str:
+        """
+        Add expense to database and respond back to the client.
+        If it couldn't detect any expense, an error message will be sent back.
+        """
         date = re.search(r"\d+\/\d+", self._message)
         expense_items = re.findall(self.EXTRACT_DATA_PATTERN, self._message[date.end() + 1:])
         for i, item in enumerate(expense_items):
@@ -30,4 +35,7 @@ class ExpenseMessageHandler(MessageHandler):
             }
         if expense_items:
             _, spent_at = self._expense_service.create_with_freetext_category(expense_items)
-            await self._respond(MESSAGES["EXPENSE_ADDED"].format(date=spent_at.strftime("%d/%m")))
+            message = MessageTemplate.EXPENSE_ADDED.format(date=spent_at.strftime("%d/%m"))
+        else:
+            message = MessageTemplate.EXPENSE_MISSING
+        return message

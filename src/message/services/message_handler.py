@@ -6,9 +6,9 @@ from bots.interfaces import BotInterface
 
 
 class MessageHandler(abc.ABC):
-    def __init__(self, message: str, bot: BotInterface):
+    def __init__(self, message: str):
         self._message = message
-        self._bot = bot
+        self._nlu_result = None
 
     @abc.abstractmethod
     def is_valid(self) -> bool:
@@ -16,9 +16,5 @@ class MessageHandler(abc.ABC):
         ...
 
     @abc.abstractmethod
-    async def handle(self):
+    async def handle(self) -> str:
         ...
-
-    async def _respond(self, message: str):
-        user_id = settings.DISCORD_USER_ID
-        await self._bot.send_message(user_id, message)
