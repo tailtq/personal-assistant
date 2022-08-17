@@ -68,8 +68,7 @@ def run_manga_parser() -> None:
                 },
             }))
     except Exception as e:
-        # TODO: Log to sentry
-        print(e)
+        sentry_sdk.capture_exception(e)
 
 
 run_manga_parser()

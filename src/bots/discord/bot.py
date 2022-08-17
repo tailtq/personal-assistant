@@ -8,8 +8,7 @@ from django.conf import settings
 
 from bots.base import BaseBot
 from bots.interfaces import BotInterface
-from message.services.message_handler import MessageHandler
-from message.services import ExpenseMessageHandler
+from message.services import ExpenseMessageHandler, MessageHandler, MessageService
 from message.const import MessageTemplate
 
 
@@ -33,11 +32,15 @@ class DiscordBot(BaseBot, Bot, BotInterface):
         # get intent -> handle relevant app
         # Note: All Discord messages must be sent via a channel (public, private)
         try:
+            user_id = settings.DISCORD_USER_ID
+            prev_context = MessageService().get_user_context(user_id)
+            context = {}
+            # Loop through handlers, determine the right one, and process
             for handler_class in self.message_handlers:
-                handler = handler_class(message.clean_content)
+                handler = handler_class(message.clean_content, user_id, context, prev_context)
                 if handler.is_valid():
-                    message = await handler.handle()
-                    await self.send_message(settings.DISCORD_USER_ID, message)
+                    response = await handler.handle()
+                    await self.send_message(user_id, response)
                     break
         except Exception as e:
             await self.send_message(settings.DISCORD_USER_ID, MessageTemplate.TECHNICAL_ISSUE)

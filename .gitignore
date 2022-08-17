@@ -3,3 +3,4 @@
 
 .env
 src/static/
+src/expense/management/commands/expenses_messenger.json

@@ -1,14 +1,17 @@
 import abc
+from typing import Optional, Dict
 
-from django.conf import settings
-
-from bots.interfaces import BotInterface
+from message.services.message import MessageService
 
 
 class MessageHandler(abc.ABC):
-    def __init__(self, message: str):
+    def __init__(self, message: str, user_id: int, context, prev_context: Optional[Dict]):
         self._message = message
         self._nlu_result = None
+        self._user_id = user_id
+        self._context = context
+        self._prev_context = prev_context
+        self._message_service = MessageService()
 
     @abc.abstractmethod
     def is_valid(self) -> bool:

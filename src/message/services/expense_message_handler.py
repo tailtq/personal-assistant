@@ -8,7 +8,8 @@ from message.const import AppName, MessageTemplate
 
 class ExpenseMessageHandler(MessageHandler):
     VALID_PATTERN: str = r"\d+\/\d+ ([a-zA-Z ]+ \d+(k|\$)?( \([\w ]+\))?,?)+"
-    EXTRACT_DATA_PATTERN: str = r"([a-zA-Z ]+) (\d+)(k|\$)?(?: \(([\w ]+)\))?"
+    EXTRACT_DATE_PATTERN: str = r"\d+\/\d+"
+    EXTRACT_EXPENSES_PATTERN: str = r" ?([a-zA-Z ]+) (\d+)(k|\$)?(?: \(([\w ]+)\))?"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -23,8 +24,8 @@ class ExpenseMessageHandler(MessageHandler):
         Add expense to database and respond back to the client.
         If it couldn't detect any expense, an error message will be sent back.
         """
-        date = re.search(r"\d+\/\d+", self._message)
-        expense_items = re.findall(self.EXTRACT_DATA_PATTERN, self._message[date.end() + 1:])
+        date = re.search(self.EXTRACT_DATE_PATTERN, self._message)
+        expense_items = re.findall(self.EXTRACT_EXPENSES_PATTERN, self._message[date.end() + 1:])
         for i, item in enumerate(expense_items):
             expense_items[i] = {
                 "spent_at": date.group(0),
