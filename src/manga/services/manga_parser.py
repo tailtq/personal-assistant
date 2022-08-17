@@ -1,3 +1,4 @@
+import os
 import re
 import urllib.parse
 from typing import List, Tuple
@@ -10,6 +11,8 @@ import asyncio
 
 from ..const import MangaAccessMethod
 from ..dtos.manga import MangaSiteDTO, MangaChapterDTO
+
+EXEC_PATH = os.environ.get("GOOGLE_CHROME_SHIM", None)
 
 
 class MangaParserService:
@@ -30,7 +33,13 @@ class MangaParserService:
         """
         Get raw HTML of a page using Puppeteer
         """
-        browser = await launch(headless=True)
+        browser = await launch(headless=True, executablePath=EXEC_PATH, args=[
+            "--no-sandbox",
+            "--single-process",
+            "--disable-dev-shm-usage",
+            "--disable-gpu",
+            "--no-zygote",
+        ])
         page = await browser.newPage()
         await page.goto(url)
         await page.waitFor(1.5)
