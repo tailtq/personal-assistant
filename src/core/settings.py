@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'django_crontab',
     'bots.apps.BotsConfig',
     'manga.apps.MangaConfig',
+    'expense.apps.ExpenseConfig',
     'UI.apps.UIConfig',
 ]
 
@@ -155,7 +156,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Env variable
 DISCORD_TOKEN = os.environ.get("DISCORD_TOKEN")
-DISCORD_USER_ID = int(os.environ.get("DISCORD_USER_ID", 0))
+DISCORD_USER_ID = os.environ.get("DISCORD_USER_ID", "0")
 
 CRONJOBS = [
     ('* * * * *', 'manga.jobs.run_manga_parser.run_manga_parser')
