@@ -26,12 +26,13 @@ class ExpenseService(BaseService):
             # preprocess data
             item = {key: value.strip() for key, value in item.items()}
             # group freetext category
-            category = self._expense_category_service.group_category(item["category"])
+            category = self._expense_category_service.group_category(item["title"])
+            description = item.get("description", "")
             spent_at = datetime.strptime(f"{item['spent_at']}/{datetime.today().year}", "%d/%m/%Y")
             insert_data.append(
                 Expense(
                     category=category,
-                    description=item.get("description", ""),
+                    description=item["title"] + (" (" + description + ")" if description else ""),
                     amount=float(item["amount"]),
                     currency=self._group_currency(item["currency"]),
                     spent_at=spent_at

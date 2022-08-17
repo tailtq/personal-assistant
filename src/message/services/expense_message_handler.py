@@ -7,9 +7,9 @@ from message.const import AppName, MessageTemplate
 
 
 class ExpenseMessageHandler(MessageHandler):
-    VALID_PATTERN: str = r"\d+\/\d+ ([a-zA-Z ]+ \d+(k|\$)?( \([\w ]+\))?,?)+"
+    VALID_PATTERN: str = r"\d+\/\d+ ([a-zA-Z\+ ]+ \d+(k|\$)?( \([\w ]+\))?,?)+"
     EXTRACT_DATE_PATTERN: str = r"\d+\/\d+"
-    EXTRACT_EXPENSES_PATTERN: str = r" ?([a-zA-Z ]+) (\d+)(k|\$)?(?: \(([\w ]+)\))?"
+    EXTRACT_EXPENSES_PATTERN: str = r" ?([a-zA-Z\+ ]+) (\d+)(k|\$)?(?: \(([\w ]+)\))?"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -29,7 +29,7 @@ class ExpenseMessageHandler(MessageHandler):
         for i, item in enumerate(expense_items):
             expense_items[i] = {
                 "spent_at": date.group(0),
-                "category": item[0],
+                "title": item[0],
                 "amount": item[1],
                 "currency": item[2],
                 "description": item[3],
