@@ -11,7 +11,10 @@ class ExpenseCategoryService(BaseService):
         self.repository: ExpenseCategoryRepository
 
     def group_category(self, category_text: str) -> ExpenseCategory:
-        return self.repository.create({"title": category_text})
+        result: ExpenseCategory = self.repository.first(title__iexact=category_text)
+        if not result:
+            result = self.repository.create({"title": category_text})
+        return result
 
     def _delete_relationships(self, _id: Union[str, int]):
         pass
