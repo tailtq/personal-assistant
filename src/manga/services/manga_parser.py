@@ -59,7 +59,10 @@ class MangaParserService:
             html = asyncio.run(self._crawl_html_content_by_puppeteer(self._site.crawl_url))
 
         bs = BeautifulSoup(html, features="html.parser")
-        search_results: List[Tag] = bs.select(self._site.manga_list)
+        if type(self._site.manga_list) == str:
+            search_results: List[Tag] = bs.select(self._site.manga_list)
+        else:
+            search_results: List[Tag] = self._site.manga_list(bs)
         manga: List[MangaChapterDTO] = []
 
         for result in search_results:
