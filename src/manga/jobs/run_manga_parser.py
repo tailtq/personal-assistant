@@ -2,8 +2,6 @@ import json
 from typing import List
 
 # Configure sentry
-import sentry_sdk
-
 from core.config.sentry import *
 from core.services import RedisMessageQueueService
 from manga.const import QueueMessage, MangaAccessMethod
@@ -27,16 +25,17 @@ CRAWLING_MANGA_SITES = [
         crawl_url="https://w13.mangafreak.net/",
         manga_list=".latest_list:first-child > .latest_item",
         manga_name="a.name",
-        chapter_text_pattern=r"Chapter ([0-9.]+)",
         manga_chapter=".chapter_box a:first-child",
+        chapter_text_pattern=r"Chapter ([0-9.]+)",
+        access_method=MangaAccessMethod.HTTP_REQUESTS,
     ),
     MangaSiteDTO(
         site_name="MangaPark",
         lang="en",
         crawl_url="https://mangapark.net/",
-        manga_list="#latest_release .group",
+        manga_list=lambda bs: bs.select("#latest_release")[-1].select(".group"),
         manga_name="h3.text-lg a",
-        manga_chapter="ul li a",
+        manga_chapter=".group div:last-child > div:last-child > div a",
         chapter_text_pattern=r"(Chapter |Ch\.)([0-9.]+)",
         access_method=MangaAccessMethod.PUPPETEER,
     ),

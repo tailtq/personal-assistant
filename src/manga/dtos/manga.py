@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Callable, Union
 
 from bson import ObjectId
 
@@ -11,7 +11,7 @@ class MangaSiteDTO:
         site_name: str,
         lang: str,
         crawl_url: str,
-        manga_list: str,
+        manga_list: Union[str, Callable],
         manga_name: str,
         manga_chapter: str,
         chapter_text_pattern: str,
