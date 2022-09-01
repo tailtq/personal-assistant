@@ -3,6 +3,7 @@ from typing import Union, Optional, Dict
 
 from core.services import BaseService
 from ..const import MessageTemplate
+from ..dtos import MessageDTO
 from ..repositories.message import MessageRepository
 
 
@@ -32,10 +33,10 @@ def save_message(app_name: str):
                 "context": self._context,
             }
             try:
-                response: str = await func(self)
+                response: MessageDTO = await func(self)
                 message_service.create({
                     **message_data,
-                    "bot_text": response,
+                    "bot_text": response.message,
                 })
                 return response
             except Exception as e:

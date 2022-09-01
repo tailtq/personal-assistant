@@ -2,6 +2,7 @@
 **/__pycache__/
 
 .env
+test.jpg
 src/static/
 src/expense/management/commands/expenses_messenger.json
 src/expense/management/commands/expense_items.json

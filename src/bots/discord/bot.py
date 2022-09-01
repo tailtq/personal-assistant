@@ -8,8 +8,11 @@ from django.conf import settings
 
 from bots.base import BaseBot
 from bots.interfaces import BotInterface
-from message.services import ExpenseMessageHandler, MessageHandler, MessageService
+from message.dtos import MessageDTO
+from message.services.handlers import ExpenseMessageHandler, MessageHandler
+from message.services import MessageService
 from message.const import MessageTemplate
+from message.services.handlers.expense_report_handler import ExpenseReportHandler
 
 
 class DiscordBot(BaseBot, Bot, BotInterface):
@@ -22,7 +25,8 @@ class DiscordBot(BaseBot, Bot, BotInterface):
     @property
     def message_handlers(self) -> List[Type[MessageHandler]]:
         return [
-            ExpenseMessageHandler
+            ExpenseMessageHandler,
+            ExpenseReportHandler,
         ]
 
     async def on_message(self, message: discord.Message):
@@ -39,8 +43,8 @@ class DiscordBot(BaseBot, Bot, BotInterface):
             for handler_class in self.message_handlers:
                 handler = handler_class(message.clean_content, user_id, context, prev_context)
                 if handler.is_valid():
-                    response = await handler.handle()
-                    await self.send_message(user_id, response)
+                    response: MessageDTO = await handler.handle()
+                    await self.send_message(user_id, response.message, response.files)
                     break
         except Exception as e:
             await self.send_message(settings.DISCORD_USER_ID, MessageTemplate.TECHNICAL_ISSUE)
@@ -52,7 +56,9 @@ class DiscordBot(BaseBot, Bot, BotInterface):
     async def on_error(self, event, *args, **kwargs):
         raise
 
-    async def send_message(self, user: Union[int, discord.User], message: Union[str, discord.Embed]) -> None:
+    async def send_message(
+        self, user: Union[int, discord.User], message: Union[str, discord.Embed], files: List[str] = None
+    ) -> None:
         """
         Send a text message to a particular user
         """
@@ -60,7 +66,8 @@ class DiscordBot(BaseBot, Bot, BotInterface):
             user = await self.fetch_user(user)
 
         if type(message) == str:
-            await user.send(content=message)
+            files = [discord.File(file) for file in files] if files else None
+            await user.send(content=message, files=files)
         elif type(message) == discord.Embed:
             await user.send(embed=message)
 

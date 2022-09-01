@@ -1,7 +1,8 @@
 import re
 
+from message.dtos import MessageDTO
 from message.services.message import save_message
-from message.services.message_handler import MessageHandler
+from message.services.handlers.message_handler import MessageHandler
 from expense.services import ExpenseService
 from message.const import AppName, MessageTemplate
 
@@ -19,7 +20,7 @@ class ExpenseMessageHandler(MessageHandler):
         return bool(re.fullmatch(self.VALID_PATTERN, self._message))
 
     @save_message(AppName.EXPENSE)
-    async def handle(self) -> str:
+    async def handle(self) -> MessageDTO:
         """
         Add expense to database and respond back to the client.
         If it couldn't detect any expense, an error message will be sent back.
@@ -39,4 +40,4 @@ class ExpenseMessageHandler(MessageHandler):
             message = MessageTemplate.EXPENSE_ADDED.format(date=spent_at.strftime("%d/%m"))
         else:
             message = MessageTemplate.EXPENSE_MISSING
-        return message
+        return MessageDTO(message)

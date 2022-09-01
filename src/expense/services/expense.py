@@ -42,6 +42,18 @@ class ExpenseService(BaseService):
         result = self.repository.create(insert_data)
         return result, spent_at
 
+    def group_by_category(self, from_date: datetime, to_date: datetime, minimum_amount: float = 0) -> List[Dict]:
+        """
+        Group all expenses having the same category together
+        """
+        return self.repository.group_by_category(from_date, to_date, minimum_amount)
+
+    def get_total_amount(self, from_date: datetime, to_date: datetime) -> float:
+        """
+        Get total amount during a period
+        """
+        return self.repository.get_total_amount(from_date, to_date)
+
     @staticmethod
     def _group_currency(currency: str):
         return "$" if currency.strip() == "$" else "KVND"

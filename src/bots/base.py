@@ -1,6 +1,6 @@
 import abc
 from abc import abstractmethod
-from typing import Union
+from typing import Union, List
 from threading import Lock
 
 
@@ -34,5 +34,5 @@ class BaseBot(abc.ABC):
         raise NotImplementedError()
 
     @abstractmethod
-    def send_message(self, user: Union[int, object], message: str):
+    def send_message(self, user: Union[int, object], message: str, files: List[str] = None):
         raise NotImplementedError()
