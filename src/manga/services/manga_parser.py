@@ -110,9 +110,11 @@ class MangaParserService:
         child_objs: List[Tag] = bs.select(tag)
         if child_objs is not None and len(child_objs) > 0:
             for obj in child_objs:
-                chapter_number = float(re.search(chapter_text_pattern, obj.get_text()).groups()[-1])
-                link = obj.attrs["href"].strip()
-                chapters.append((chapter_number, link))
+                chapter = re.search(chapter_text_pattern, obj.get_text())
+                if chapter:
+                    chapter_number = float(chapter.groups()[-1])
+                    link = obj.attrs["href"].strip()
+                    chapters.append((chapter_number, link))
         if chapters:
             chapters = sorted(chapters, key=lambda x: x[0], reverse=True)
             result = chapters[0]

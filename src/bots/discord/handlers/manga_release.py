@@ -12,7 +12,7 @@ class MangaReleaseHandler:
         self._bot = bot
         self._chapter_ids = chapter_ids
 
-    def handle(self):
+    async def handle(self):
         user_id: int = settings.DISCORD_USER_ID
         chapters = MangaChapterService().list({"id__in": self._chapter_ids})
 
