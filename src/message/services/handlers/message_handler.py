@@ -2,6 +2,7 @@ import abc
 from typing import Optional, Dict
 
 from message.services.message import MessageService
+from message.dtos import MessageDTO
 
 
 class MessageHandler(abc.ABC):
@@ -19,5 +20,5 @@ class MessageHandler(abc.ABC):
         ...
 
     @abc.abstractmethod
-    async def handle(self) -> str:
+    async def handle(self) -> MessageDTO:
         ...

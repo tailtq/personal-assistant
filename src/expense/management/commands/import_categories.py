@@ -5,7 +5,7 @@ from typing import List
 
 from django.core.management.base import BaseCommand
 
-from message.services import ExpenseMessageHandler
+from message.services.handlers import ExpenseMessageHandler
 
 
 class Command(BaseCommand):
