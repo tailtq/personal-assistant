@@ -11,9 +11,6 @@ from bots.discord.handlers.manga_release import MangaReleaseHandler
 
 class RedisListenerCog(commands.Cog):
     def __init__(self, bot: DiscordBot):
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-
         self._bot = bot
         self.listen_to_redis.start()
         self._message_queue = RedisMessageQueueService("bots_message_queue")
@@ -21,7 +18,7 @@ class RedisListenerCog(commands.Cog):
     def cog_unload(self):
         self.listen_to_redis.cancel()
 
-    @tasks.loop(seconds=1.0)
+    @tasks.loop(seconds=1.0, loop=asyncio.get_event_loop())
     async def listen_to_redis(self):
         while not self._message_queue.is_empty():
             message: bytes = self._message_queue.pull()

@@ -12,6 +12,7 @@ sentry-sdk
 
 beautifulsoup4~=4.11.1
 discord==1.7.3
+discord.py==1.7.3
 fuzzywuzzy~=0.18.0
 python-Levenshtein~=0.12.2
 pyppeteer~=1.0.2
