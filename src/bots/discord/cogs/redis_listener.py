@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from discord.ext import commands, tasks
@@ -10,6 +11,9 @@ from bots.discord.handlers.manga_release import MangaReleaseHandler
 
 class RedisListenerCog(commands.Cog):
     def __init__(self, bot: DiscordBot):
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+
         self._bot = bot
         self.listen_to_redis.start()
         self._message_queue = RedisMessageQueueService("bots_message_queue")
