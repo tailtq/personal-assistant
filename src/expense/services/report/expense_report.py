@@ -1,3 +1,4 @@
+import os.path
 from datetime import datetime
 
 import matplotlib.pyplot as plt
@@ -44,6 +45,7 @@ class ExpenseReportService:
         plt.title(f"Expense ({from_date} - {to_date}): {total_amount}K VND", pad=20)
         # save figure
         plt.savefig(chart_path)
+        plt.close()
         return chart_path
 
     @staticmethod

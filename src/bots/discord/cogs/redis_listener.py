@@ -1,4 +1,3 @@
-import asyncio
 import json
 
 from discord.ext import commands, tasks
@@ -18,7 +17,7 @@ class RedisListenerCog(commands.Cog):
     def cog_unload(self):
         self.listen_to_redis.cancel()
 
-    @tasks.loop(seconds=1.0, loop=asyncio.get_event_loop())
+    @tasks.loop(seconds=1.0)
     async def listen_to_redis(self):
         while not self._message_queue.is_empty():
             message: bytes = self._message_queue.pull()
