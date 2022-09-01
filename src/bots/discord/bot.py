@@ -19,7 +19,7 @@ class DiscordBot(BaseBot, Bot, BotInterface):
     MESSAGE_EMBEDDED_COLOR = 0x0099ff
 
     def __init__(self, token: str, cog_classes: List[Type[Cog]] = None):
-        BaseBot.__init__(self, token, command_prefix="")
+        BaseBot.__init__(self, token, intents=discord.Intents.default(), command_prefix="")
         self._add_cogs(cog_classes)
 
     @property
