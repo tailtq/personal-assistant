@@ -20,5 +20,5 @@ class MessageHandler(abc.ABC):
         ...
 
     @abc.abstractmethod
-    async def handle(self) -> MessageDTO:
+    def handle(self) -> MessageDTO:
         ...

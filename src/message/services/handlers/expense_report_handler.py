@@ -18,7 +18,7 @@ class ExpenseReportHandler(MessageHandler):
         return bool(re.fullmatch(self.VALID_PATTERN, self._message))
 
     @save_message(AppName.EXPENSE)
-    async def handle(self) -> MessageDTO:
+    def handle(self) -> MessageDTO:
         """
         Add expense to database and respond back to the client.
         If it couldn't detect any expense, an error message will be sent back.

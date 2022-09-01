@@ -24,7 +24,7 @@ def save_message(app_name: str):
 
     def wrapper(func):
         @wraps(func)
-        async def decorator(self):
+        def decorator(self):
             message_data = {
                 "user_id": self._user_id,
                 "app_name": app_name,
@@ -33,7 +33,7 @@ def save_message(app_name: str):
                 "context": self._context,
             }
             try:
-                response: MessageDTO = await func(self)
+                response: MessageDTO = func(self)
                 message_service.create({
                     **message_data,
                     "bot_text": response.message,
