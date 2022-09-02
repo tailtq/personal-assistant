@@ -43,7 +43,7 @@ class DiscordBot(BaseBot, Bot, BotInterface):
             for handler_class in self.message_handlers:
                 handler = handler_class(message.clean_content, user_id, context, prev_context)
                 if handler.is_valid():
-                    response: MessageDTO = await handler.handle()
+                    response: MessageDTO = handler.handle()
                     await self.send_message(user_id, response.message, response.files)
                     break
         except Exception as e:
