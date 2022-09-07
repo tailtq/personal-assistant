@@ -34,16 +34,12 @@ def save_message(app_name: str):
             }
             try:
                 response: MessageDTO = func(self)
-                message_service.create({
-                    **message_data,
-                    "bot_text": response.message,
-                })
+                message_data["bot_text"] = response.message
+                message_service.create(message_data)
                 return response
             except Exception as e:
-                message_service.create({
-                    **message_data,
-                    "bot_text": MessageTemplate.TECHNICAL_ISSUE,
-                })
+                message_data["bot_text"] = MessageTemplate.TECHNICAL_ISSUE
+                message_service.create(message_data)
                 raise e
 
         return decorator
