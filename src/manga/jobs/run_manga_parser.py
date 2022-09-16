@@ -46,7 +46,7 @@ def run_manga_parser() -> None:
     """
     Run manga parser
     """
-    sentry_sdk.capture_message("Scheduler is running")
+    # sentry_sdk.capture_message("Scheduler is running")
 
     try:
         chapters: List[MangaChapterDTO] = []

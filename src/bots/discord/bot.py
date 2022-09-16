@@ -49,6 +49,7 @@ class DiscordBot(BaseBot, Bot, BotInterface):
                     await self.send_message(user_id, response.message, response.files)
                     break
         except Exception as e:
+            print(e)
             await self.send_message(settings.DISCORD_USER_ID, MessageTemplate.TECHNICAL_ISSUE)
             sentry_sdk.capture_exception(e)
 

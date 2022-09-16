@@ -9,7 +9,7 @@ from message.const import AppName, MessageTemplate
 
 
 class ExpenseReportHandler(MessageHandler):
-    VALID_PATTERN: str = r"(?:Report|report) (\d+\/\d+) - (\d+\/\d+)"
+    VALID_PATTERN: str = r"(?:Report|report) (\d+\/\d+) - (\d+\/\d+) ?(\w+)?"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,13 +24,17 @@ class ExpenseReportHandler(MessageHandler):
         If it couldn't detect any expense, an error message will be sent back.
         """
         year = datetime.today().year
-        from_date, to_date = re.fullmatch(self.VALID_PATTERN, self._message).groups()
+        from_date, to_date, report_type = re.fullmatch(self.VALID_PATTERN, self._message).groups()
         from_date = datetime.strptime(from_date, "%d/%m").replace(year=year)
         to_date = datetime.strptime(to_date, "%d/%m").replace(year=year)
+        report_type = report_type.lower() if report_type else "table"
 
-        report_img_path = "test.jpg"
-        report_service = ExpenseReportService(from_date, to_date)
-        result = report_service.plot_pie_chart(report_img_path)
+        report_service = ExpenseReportService(from_date, to_date, report_type.lower())
+        result, plotting_type = report_service.plot_chart()
         if result is None:
             return MessageDTO(MessageTemplate.EXPENSE_REPORTED_FAILED)
-        return MessageDTO(MessageTemplate.EXPENSE_REPORTED, [report_img_path])
+        if plotting_type == "image":
+            return MessageDTO(MessageTemplate.EXPENSE_REPORTED, [result])
+        if plotting_type == "text":
+            message = f"{MessageTemplate.EXPENSE_REPORTED}\n```{result}```"
+            return MessageDTO(message)
